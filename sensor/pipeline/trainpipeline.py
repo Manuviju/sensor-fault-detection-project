@@ -1,6 +1,6 @@
 from sensor.entity.config_entity import TrainingPipelineConfig,DataIngestionConfig
 from sensor.exception import SensorException
-from sensor.entity.artifact_entity import DataIngestionArtifact
+from sensor.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact
 from sensor.components.data_ingestion import DataIngestion
 import sys,os
 from sensor.logger import logging
@@ -22,7 +22,7 @@ class TrainPipeline:
         except Exception as e:
             raise SensorException(e,sys) 
 
-    def start_data_validation(self):
+    def start_data_validation(self, data_ingestion_artifact:DataIngestionArtifact)->DataValidationArtifact:
         try:
             pass
         except Exception as e:
