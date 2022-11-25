@@ -6,11 +6,14 @@ import os,sys
 from sklearn.model_selection import train_test_split
 from pandas import DataFrame
 from sensor.data_access.sensor_data import SensorData
+from sensor.utils.main import read_yaml_file
+from sensor.constant.training_pipeline import SCHEMA_FILE_PATH
 class DataIngestion:
 
     def __init__(self, data_ingestion_config:DataIngestionConfig):
         try:
             self.data_ingestion_config = data_ingestion_config
+            self._scema_config = read_yaml_file(SCHEMA_FILE_PATH) 
         except Exception as e:
             raise SensorException(e,sys)
         
@@ -68,9 +71,10 @@ class DataIngestion:
     def initiate_data_ingestion(self)-> DataIngestionArtifact:
         try:
             dataframe = self.export_data_into_feature_stores()
+            dataframe = dataframe.drop(self._scema_config['drop_columns'], axis=1)
             self.split_data_as_train_test_split(dataframe=dataframe)
             data_ingestion_artifact = DataIngestionArtifact(trained_file_path=self.data_ingestion_config.training_file_path,
             test_file_path=self.data_ingestion_config.testing_file_path)
             return data_ingestion_artifact
         except Exception as e:
-            raise SensorException(e,sys)
+            raise SensorException(e,sys) 
